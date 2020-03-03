@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { GlobalContext } from "../context/GlobalState";
+import { numerosComPontos } from "../utils/format";
 
 export const GastosProventos = () => {
   const { transactions } = useContext(GlobalContext);
@@ -13,13 +14,13 @@ export const GastosProventos = () => {
       <div>
         <h4>Lancamentos</h4>
         <p id="money-plus" className="money plus">
-          {proventos}
+          R$ {numerosComPontos(proventos)}
         </p>
       </div>
       <div>
         <h4>Despezas</h4>
         <p id="money-minus" className="money minus">
-          {despezas}
+          R$ {numerosComPontos(despezas)}
         </p>
       </div>
     </div>

@@ -15,10 +15,10 @@ exports.getTransaction = async (req, res, next) => {
             data: transactions 
         })
     } catch (err) {
-        return res.send(500).json({
+        return res.status(500).json({
             success: false,
             error: 'Erro Servidor'
-        })
+        });
         
     }
 }
@@ -27,12 +27,57 @@ exports.getTransaction = async (req, res, next) => {
 // @route   POST /api/v1/transactions
 // @access  Public
 exports.addTransaction = async (req, res, next) => {
-    res.send('POST transação');
+    try {
+        const { texto, quantia } = req.body;
+    
+        const transaction = await Transaction.create(req.body);
+    
+        return res.status(201).json({
+            success: true,
+            data: transaction
+        })
+        
+    } catch (err) {
+        if(err.name === 'ValidationError'){
+            const messages = Object.values(err.errors).map(val => val.message);
+
+            res.status(400).json({
+                sucess: false,
+                error: messages
+            })
+        } else {
+            return res.status(500).json({
+                success: false,
+                error: 'Erro Servidor'
+            });
+        }
+    }
 }
 
 // @desc    Deletar transação
 // @route   DELETE /api/v1/transactions/:id
 // @access  Public
 exports.deleteTransaction = async (req, res, next) => {
-    res.send('DELETE transação');
+    try {
+        const transaction = await Transaction.findById(req.params.id);
+
+        if(!transaction) {
+            return res.status(404).json({
+                success: false,
+                error: 'Nenhuma transação encontrada'
+            })
+        }
+
+        await transaction.remove();
+
+        return res.status(200).json({
+            success: true,
+            data: {}
+        })
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            error: 'Erro Servidor'
+        }); 
+    }
 }
